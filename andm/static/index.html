@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ANDM — Adaptive Notification Middleware Simulator</title>
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    darkMode: 'class',
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['"IBM Plex Sans"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+          mono: ['"IBM Plex Mono"', 'Consolas', 'monospace'],
+        },
+        colors: {
+          brand: {
+            50: '#eff6ff',
+            100: '#dbeafe',
+            500: '#3b82f6',
+            600: '#2563eb',
+            700: '#1d4ed8',
+          }
+        }
+      }
+    }
+  }
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<style>
+  :root {
+    --bg-page: #f8fafc;
+    --card-bg: #ffffff;
+    --card-border: #e2e8f0;
+    --text-primary: #0f172a;
+    --text-muted: #64748b;
+    --signal: #2563eb;
+    --deliver: #059669;
+    --digest: #d97706;
+    --hold: #dc2626;
+  }
+
+  html.dark {
+    --bg-page: #090d16;
+    --card-bg: #111723;
+    --card-border: #1e293b;
+    --text-primary: #f8fafc;
+    --text-muted: #94a3b8;
+    --signal: #3b82f6;
+    --deliver: #10b981;
+    --digest: #f59e0b;
+    --hold: #ef4444;
+  }
+
+  body {
+    background-color: var(--bg-page);
+    color: var(--text-primary);
+    font-family: 'IBM Plex Sans', -apple-system, sans-serif;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+  html.dark ::webkit-scrollbar-thumb { background: #334155; }
+
+  /* Input Accent styling */
+  input[type=range] {
+    accent-color: var(--signal);
+  }
+
+  /* Switch Toggle */
+  .toggle-switch {
+    width: 38px;
+    height: 22px;
+    background-color: #cbd5e1;
+    border-radius: 9999px;
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  html.dark .toggle-switch {
+    background-color: #334155;
+  }
+  .toggle-switch.active {
+    background-color: var(--signal);
+  }
+  .toggle-switch::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 18px;
+    height: 18px;
+    background-color: #ffffff;
+    border-radius: 50%;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .toggle-switch.active::after {
+    transform: translateX(16px);
+  }
+
+  /* Ultra-Modern Flagship Phone Styling */
+  .phone-frame {
+    width: 315px;
+    height: 630px;
+    background: #020617;
+    border-radius: 50px;
+    padding: 10px;
+    position: relative;
+    box-shadow: 
+      0 0 0 2px #334155,
+      0 0 0 5px #0f172a,
+      0 25px 60px -15px rgba(0, 0, 0, 0.5),
+      0 0 35px rgba(37, 99, 235, 0.15);
+    user-select: none;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  html.dark .phone-frame {
+    box-shadow: 
+      0 0 0 2px #475569,
+      0 0 0 5px #1e293b,
+      0 30px 70px -20px rgba(0, 0, 0, 0.8),
+      0 0 45px rgba(59, 130, 246, 0.2);
+  }
+
+  /* Side Hardware Buttons */
+  .phone-frame::before {
+    content: '';
+    position: absolute;
+    top: 105px;
+    left: -7px;
+    width: 3.5px;
+    height: 32px;
+    background: #475569;
+    border-radius: 3px 0 0 3px;
+    box-shadow: 0 48px 0 #475569, 0 90px 0 #475569;
+  }
+  .phone-frame::after {
+    content: '';
+    position: absolute;
+    top: 135px;
+    right: -7px;
+    width: 3.5px;
+    height: 52px;
+    background: #475569;
+    border-radius: 0 3px 3px 0;
+  }
+
+  /* Dynamic Island Pill */
+  .dynamic-island {
+    width: 88px;
+    height: 24px;
+    background: #000000;
+    border-radius: 20px;
+    transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.25);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 8px;
+  }
+  .dynamic-island.expand {
+    width: 210px;
+    height: 36px;
+    border-radius: 22px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+  }
+
+  @keyframes vibrate {
+    0% { transform: translate(0) rotate(0deg); }
+    20% { transform: translate(-3px, 2px) rotate(-0.5deg); }
+    40% { transform: translate(-3px, -2px) rotate(0.5deg); }
+    60% { transform: translate(3px, 2px) rotate(-0.5deg); }
+    80% { transform: translate(3px, -2px) rotate(0.5deg); }
+    100% { transform: translate(0) rotate(0deg); }
+  }
+  .phone-vibrate { animation: vibrate 0.25s ease-in-out 2; }
+
+  @keyframes slideDown {
+    from { transform: translateY(-30px) scale(0.92); opacity: 0; }
+    to { transform: translateY(0) scale(1); opacity: 1; }
+  }
+  .anim-slide-down { animation: slideDown 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+</style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+<header class="bg-white dark:bg-[#0f1724] border-b border-slate-200 dark:border-slate-800 px-6 py-3.5 flex flex-wrap justify-between items-center gap-4 shadow-sm transition-colors">
+  <div class="flex items-center gap-3">
+    <div class="p-2 bg-blue-50 dark:bg-blue-600/20 text-blue-600 dark:text-blue-400 rounded-lg border border-blue-200 dark:border-blue-500/30">
+      <i data-lucide="cpu" class="w-5 h-5"></i>
+    </div>
+    <div>
+      <h1 class="text-base font-bold tracking-tight text-slate-900 dark:text-slate-100 flex items-center gap-2">
+        ANDM Middleware Simulator
+      </h1>
+      <p class="text-xs text-slate-500 dark:text-slate-400">Attention Network & Delivery Middleware · Multi-Armed Bandit Route Simulator</p>
+    </div>
+  </div>
+
+  <div class="flex items-center gap-3 text-xs font-mono">
+    <!-- Light/Dark Mode Toggle Button -->
+    <button id="themeToggleBtn" class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700/80 transition flex items-center gap-2 shadow-sm">
+      <i data-lucide="sun" class="w-4 h-4 text-amber-500 dark:hidden"></i>
+      <i data-lucide="moon" class="w-4 h-4 text-blue-400 hidden dark:block"></i>
+      <span id="themeLabel" class="font-sans font-medium">Light Mode</span>
+    </button>
+
+    <!-- Execution Mode Selector -->
+    <div class="flex items-center gap-1 bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-lg p-1">
+      <button id="modeMockBtn" class="px-2.5 py-1 rounded-md text-white bg-blue-600 font-semibold shadow-sm transition">Mock Engine</button>
+      <button id="modeLiveBtn" class="px-2.5 py-1 rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition">Live API</button>
+    </div>
+
+    <!-- Backend API Endpoint Indicator -->
+    <div class="flex items-center gap-2 bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5">
+      <div id="connDot" class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+      <span id="connLabel" class="text-slate-700 dark:text-slate-300 font-medium">Mock Engine Ready</span>
+      <input id="apiBase" type="text" value="http://127.0.0.1:8000" class="bg-transparent border-l border-slate-300 dark:border-slate-700 pl-2 text-slate-700 dark:text-slate-300 focus:outline-none w-36 hidden" placeholder="http://127.0.0.1:8000">
+    </div>
+  </div>
+</header>
+
+<main class="flex-1 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-12 gap-5 p-4 lg:p-6">
+
+  <!-- COLUMN 1: Telemetry Registers (xl:col-span-3) -->
+  <section class="xl:col-span-3 flex flex-col gap-4">
+    
+    <div class="bg-white dark:bg-[#111723] border border-slate-200 dark:border-slate-800/80 rounded-xl p-4 shadow-sm space-y-4">
+      <div class="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-3">
+        <h2 class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider flex items-center gap-2">
+          <i data-lucide="activity" class="w-4 h-4 text-blue-600 dark:text-blue-400"></i>
+          Telemetry Registers
+        </h2>
+      </div>
+
+      <!-- GPS Speed Slider -->
+      <div class="space-y-1.5">
+        <div class="flex justify-between text-xs font-medium">
+          <span class="text-slate-700 dark:text-slate-300">GPS Velocity</span>
+          <span id="speedVal" class="font-mono text-blue-600 dark:text-blue-400 font-bold">0.0 m/s</span>
+        </div>
+        <input type="range" id="speed" min="0" max="30" step="0.5" value="0" class="w-full">
+        <div class="flex justify-between text-[10px] text-slate-400 font-mono">
+          <span>0 (Stationary)</span>
+          <span>15 (54 km/h)</span>
+          <span>30 m/s</span>
+        </div>
+      </div>
+
+      <!-- IMU Acceleration Slider -->
+      <div class="space-y-1.5">
+        <div class="flex justify-between text-xs font-medium">
+          <span class="text-slate-700 dark:text-slate-300">IMU Accel. Magnitude</span>
+          <span id="imuVal" class="font-mono text-blue-600 dark:text-blue-400 font-bold">0.0 m/s²</span>
+        </div>
+        <input type="range" id="imu" min="0" max="15" step="0.5" value="0" class="w-full">
+        <div class="flex justify-between text-[10px] text-slate-400 font-mono">
+          <span>0 (At rest)</span>
+          <span>7.5 (Walking)</span>
+          <span>15 (Shaking)</span>
+        </div>
+      </div>
+
+      <!-- Context Toggles -->
+      <div class="space-y-3 border-t border-slate-100 dark:border-slate-800 pt-3">
+        <div class="flex justify-between items-center text-xs font-medium">
+          <span class="text-slate-700 dark:text-slate-300 flex items-center gap-2">
+            <i data-lucide="zap" class="w-4 h-4 text-amber-500"></i> Charging Power
+          </span>
+          <div id="sw-charging" class="toggle-switch"></div>
+        </div>
+        <div class="flex justify-between items-center text-xs font-medium">
+          <span class="text-slate-700 dark:text-slate-300 flex items-center gap-2">
+            <i data-lucide="wifi" class="w-4 h-4 text-emerald-500"></i> Unmetered Wi-Fi
+          </span>
+          <div id="sw-wifi" class="toggle-switch"></div>
+        </div>
+        <div class="flex justify-between items-center text-xs font-medium">
+          <span class="text-slate-700 dark:text-slate-300 flex items-center gap-2">
+            <i data-lucide="calendar" class="w-4 h-4 text-purple-500"></i> Calendar Event Active
+          </span>
+          <div id="sw-cal" class="toggle-switch"></div>
+        </div>
+      </div>
+
+      <button id="pushTelemetry" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold text-xs rounded-lg transition shadow-sm flex items-center justify-center gap-2">
+        <i data-lucide="database" class="w-4 h-4"></i>
+        Push to Sensor Cache
+      </button>
+    </div>
+
+    <!-- Active Environment Context Readout -->
+    <div class="bg-white dark:bg-[#111723] border border-slate-200 dark:border-slate-800/80 rounded-xl p-4 shadow-sm space-y-2.5 text-xs font-mono">
+      <div class="text-slate-500 dark:text-slate-400 text-[11px] font-sans font-bold uppercase tracking-wider pb-1 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+        <span>Evaluated Context State</span>
+        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+      </div>
+      <div class="flex justify-between border-b border-slate-100 dark:border-slate-800/60 pb-1.5">
+        <span class="text-slate-500">Motion State:</span>
+        <span id="ctxMotion" class="text-emerald-600 dark:text-emerald-400 font-bold">Stationary</span>
+      </div>
+      <div class="flex justify-between border-b border-slate-100 dark:border-slate-800/60 pb-1.5">
+        <span class="text-slate-500">Attention Load:</span>
+        <span id="ctxAttention" class="text-blue-600 dark:text-blue-400 font-bold">Low (Receptive)</span>
+      </div>
+      <div class="flex justify-between">
+        <span class="text-slate-500">Power & Net:</span>
+        <span id="ctxPower" class="text-slate-700 dark:text-slate-300 font-medium">Battery / Cellular</span>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- COLUMN 2: Notification Pipeline & Ingress (xl:col-span-4) -->
+  <section class="xl:col-span-4 flex flex-col gap-4">
+    
+    <!-- Ingress Composer -->
+    <div class="bg-white dark:bg-[#111723] border border-slate-200 dark:border-slate-800/80 rounded-xl p-4 shadow-sm space-y-3.5">
+      <div class="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-2.5">
+        <h2 class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider flex items-center gap-2">
+          <i data-lucide="send" class="w-4 h-4 text-emerald-600 dark:text-emerald-400"></i>
+          Ingress Payload Composer
+        </h2>
+      </div>
+
+      <div class="grid grid-cols-2 gap-2.5">
+        <div>
+          <label class="text-[11px] font-medium text-slate-600 dark:text-slate-400 block mb-1">Sender Identifier</label>
+          <input type="text" id="senderId" class="w-full bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700/80 rounded-lg px-2.5 py-1.5 text-xs font-mono text-slate-800 dark:text-slate-200 focus:outline-none focus:border-blue-500" value="john_slack">
+        </div>
+        <div>
+          <label class="text-[11px] font-medium text-slate-600 dark:text-slate-400 block mb-1">Channel Overrides</label>
+          <select id="channel" class="w-full bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700/80 rounded-lg px-2 py-1.5 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-blue-500">
+            <option value="">Standard Channel</option>
+            <option value="emergency_alerts">emergency_alerts</option>
+            <option value="amber_alert">amber_alert</option>
+            <option value="severe_weather">severe_weather</option>
+            <option value="phone_call">phone_call</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label class="text-[11px] font-medium text-slate-600 dark:text-slate-400 block mb-1">Notification Title</label>
+        <input type="text" id="title" class="w-full bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700/80 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-blue-500" value="John sent you a message">
+      </div>
+
+      <div>
+        <label class="text-[11px] font-medium text-slate-600 dark:text-slate-400 block mb-1">Notification Body</label>
+        <textarea id="body" rows="2" class="w-full bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700/80 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-blue-500 resize-none">Are we still meeting at 3 PM regarding the production deploy?</textarea>
+      </div>
+
+      <button id="sendBtn" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold text-xs rounded-lg transition shadow-sm flex items-center justify-center gap-2">
+        <i data-lucide="play" class="w-4 h-4 fill-current"></i>
+        Intercept & Route Notification
+      </button>
+    </div>
+
+    <!-- Execution Lifecycle Pipeline -->
+    <div class="bg-white dark:bg-[#111723] border border-slate-200 dark:border-slate-800/80 rounded-xl p-4 shadow-sm space-y-3">
+      <h2 class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
+        <span>Execution Lifecycle Stages</span>
+        <span id="pipelineStatus" class="text-[10px] font-mono text-slate-400">Idle</span>
+      </h2>
+
+      <div class="grid grid-cols-3 gap-2 text-center text-xs" id="pipeline">
+        <div class="stage-badge p-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60" data-stage="ingress">
+          <span class="block text-[10px] font-mono text-slate-400">01</span>
+          <span class="font-semibold text-slate-700 dark:text-slate-300">Ingress</span>
+        </div>
+        <div class="stage-badge p-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60" data-stage="nlp">
+          <span class="block text-[10px] font-mono text-slate-400">02</span>
+          <span class="font-semibold text-slate-700 dark:text-slate-300">NLP Embed</span>
+        </div>
+        <div class="stage-badge p-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60" data-stage="telemetry">
+          <span class="block text-[10px] font-mono text-slate-400">03</span>
+          <span class="font-semibold text-slate-700 dark:text-slate-300">Telemetry GBDT</span>
+        </div>
+        <div class="stage-badge p-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60" data-stage="graph">
+          <span class="block text-[10px] font-mono text-slate-400">04</span>
+          <span class="font-semibold text-slate-700 dark:text-slate-300">Graph Affinity</span>
+        </div>
+        <div class="stage-badge p-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60" data-stage="bandit">
+          <span class="block text-[10px] font-mono text-slate-400">05</span>
+          <span class="font-semibold text-slate-700 dark:text-slate-300">Bandit Policy</span>
+        </div>
+        <div class="stage-badge p-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60" data-stage="egress">
+          <span class="block text-[10px] font-mono text-slate-400">06</span>
+          <span class="font-semibold text-slate-700 dark:text-slate-300">Egress Token</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Inspection & Decision Result Card -->
+    <div id="resultCard" class="bg-white dark:bg-[#111723] border border-slate-200 dark:border-slate-800/80 rounded-xl p-4 shadow-sm space-y-3 hidden">
+      <div class="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-2">
+        <div class="flex items-center gap-2">
+          <span id="actionBadge" class="font-mono text-xs font-bold px-2.5 py-1 rounded">DELIVER</span>
+          <span id="latencyMeta" class="text-xs font-mono text-slate-500 dark:text-slate-400">12ms · budget OK</span>
+        </div>
+        <span id="classMeta" class="text-xs font-mono text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950 px-2 py-0.5 rounded border border-blue-200 dark:border-blue-800">class=urgent</span>
+      </div>
+
+      <p id="reasonText" class="text-xs text-slate-600 dark:text-slate-300 italic"></p>
+
+      <div class="space-y-1.5 text-xs pt-1" id="meters">
+        <!-- Dynamically filled -->
+      </div>
+
+      <div class="pt-2 border-t border-slate-100 dark:border-slate-800 flex gap-2">
+        <button id="fbOpened" class="flex-1 py-1.5 bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 dark:bg-slate-800/80 dark:hover:bg-emerald-950 dark:hover:text-emerald-300 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-medium transition">Mark Opened (+1.0)</button>
+        <button id="fbDismissed" class="flex-1 py-1.5 bg-slate-100 hover:bg-rose-50 hover:text-rose-700 dark:bg-slate-800/80 dark:hover:bg-rose-950 dark:hover:text-rose-300 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-medium transition">Mark Dismissed (-0.5)</button>
+      </div>
+    </div>
+
+    <!-- Log Console -->
+    <div class="bg-white dark:bg-[#111723] border border-slate-200 dark:border-slate-800/80 rounded-xl p-4 shadow-sm flex-1 flex flex-col">
+      <div class="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-2 mb-2">
+        <h2 class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider flex items-center gap-2">
+          <i data-lucide="terminal" class="w-4 h-4 text-amber-500"></i>
+          Execution Event Log
+        </h2>
+        <button id="clearLogBtn" class="text-[10px] text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 font-mono">Clear Log</button>
+      </div>
+      <div id="log" class="font-mono text-[11px] text-slate-600 dark:text-slate-400 space-y-1 max-h-40 overflow-y-auto flex-1 pr-1">
+        <div class="text-slate-400 italic">No request transactions logged yet.</div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- COLUMN 3: Graph & Bandit State (xl:col-span-2) -->
+  <section class="xl:col-span-2 flex flex-col gap-4">
+    
+    <!-- Sender Affinity -->
+    <div class="bg-white dark:bg-[#111723] border border-slate-200 dark:border-slate-800/80 rounded-xl p-4 shadow-sm space-y-3">
+      <h2 class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
+        <span>Sender Affinity</span>
+        <i data-lucide="share-2" class="w-3.5 h-3.5 text-purple-500"></i>
+      </h2>
+      <div id="senderList" class="space-y-2 max-h-60 overflow-y-auto">
+        <div class="text-xs text-slate-400 italic">No sender nodes evaluated yet.</div>
+      </div>
+    </div>
+
+    <!-- Bandit Arms -->
+    <div class="bg-white dark:bg-[#111723] border border-slate-200 dark:border-slate-800/80 rounded-xl p-4 shadow-sm space-y-3 flex-1">
+      <h2 class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
+        <span>Bandit Arm EVs</span>
+        <i data-lucide="layers" class="w-3.5 h-3.5 text-blue-500"></i>
+      </h2>
+      <div id="armList" class="space-y-2 max-h-80 overflow-y-auto font-mono text-xs">
+        <div class="text-xs text-slate-400 italic">No bandit history yet.</div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- COLUMN 4: Mobile Smartphone Simulation Preview (xl:col-span-3) -->
+  <section class="xl:col-span-3 flex flex-col items-center justify-start py-2">
+    
+    <div class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-3 flex items-center gap-2">
+      <i data-lucide="smartphone" class="w-4 h-4 text-emerald-500"></i>
+      Live Mobile Lockscreen Preview
+    </div>
+
+    <!-- Phone Hardware Frame -->
+    <div class="phone-frame" id="phoneFrame">
+      
+      <!-- Phone Display Screen -->
+      <div class="phone-screen w-full h-full rounded-[40px] relative overflow-hidden flex flex-col justify-between p-4" id="phoneScreen" style="background: linear-gradient(135deg, #090d16 0%, #111827 45%, #1e1b4b 100%);">
+        
+        <!-- Wallpaper Gradient Overlay Glow -->
+        <div class="absolute inset-0 bg-cover bg-center opacity-80 transition-all duration-500 pointer-events-none" id="wallpaperBg" style="background-image: radial-gradient(circle at 50% 20%, rgba(99, 102, 241, 0.3), transparent 70%), radial-gradient(circle at 85% 85%, rgba(168, 85, 247, 0.25), transparent 65%);"></div>
+
+        <!-- Lockscreen Big Clock -->
+        <div class="relative z-10 text-center my-2 space-y-1 text-white">
+          <div class="text-[10px] font-medium tracking-widest uppercase opacity-80" id="phoneDate">Sunday, October 11</div>
+          <div class="text-5xl font-extralight tracking-tight font-sans drop-shadow-md" id="phoneBigTime">09:41</div>
+        </div>
+
+        <!-- Notification Banner Area (Glassmorphic Stack) -->
+        <div id="phoneBannerArea" class="relative z-20 space-y-2.5 my-auto max-h-[290px] overflow-y-auto pr-0.5">
+          <!-- Delivered notifications land here with glassmorphic design -->
+        </div>
+
+        <!-- Lockscreen Footer & Action Shortcuts -->
+        <div class="relative z-20 flex flex-col items-center space-y-2.5 pb-1">
+          
+          <!-- Queue Badge for HOLD state -->
+          <div id="phoneQueueBadge" class="hidden bg-amber-500/20 border border-amber-500/40 text-amber-200 rounded-full px-3 py-1 text-[11px] font-mono flex items-center gap-1.5 backdrop-blur-md shadow-lg">
+            <i data-lucide="clock" class="w-3 h-3"></i>
+            <span id="phoneQueueText">1 notification queued (HOLD)</span>
+          </div>
+
+          <!-- Bottom Lockscreen Quick Shortcuts -->
+          <div class="w-full flex justify-between items-center px-4 text-white/80">
+            <button class="w-8 h-8 rounded-full bg-black/40 backdrop-blur-md border border-white/20 flex items-center justify-center hover:bg-white/20 transition">
+              <i data-lucide="flashlight" class="w-3.5 h-3.5"></i>
+            </button>
+            <button class="w-8 h-8 rounded-full bg-black/40 backdrop-blur-md border border-white/20 flex items-center justify-center hover:bg-white/20 transition">
+              <i data-lucide="camera" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+
+          <!-- Home Indicator Pill -->
+          <div class="w-28 h-1 bg-white/50 rounded-full"></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Screen Action Controls -->
+    <div class="flex gap-2 mt-4 font-mono text-[11px]">
+      <button id="btnPhoneSound" class="px-3 py-1.5 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg border border-slate-200 dark:border-slate-700 flex items-center gap-1.5 shadow-sm transition">
+        <i data-lucide="volume-2" class="w-3.5 h-3.5"></i> Sound
+      </button>
+      <button id="btnClearPhone" class="px-3 py-1.5 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg border border-slate-200 dark:border-slate-700 flex items-center gap-1.5 shadow-sm transition">
+        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Clear
+      </button>
+    </div>
+
+  </section>
+
+</main>
+
+<script>
+// Selector Helpers
+const $ = (s) => document.querySelector(s);
+const $$ = (s) => document.querySelectorAll(s);
+
+// Application State
+let mode = 'mock'; // 'mock' or 'live'
+let soundEnabled = true;
+let heldNotificationsCount = 0;
+let lastResult = null;
+
+const mockState = {
+  telemetry: { speed_mps: 0, imu_magnitude: 0, is_charging: false, is_unmetered_wifi: false, calendar_busy: false },
+  senders: {
+    'john_slack': { sender_id: 'john_slack', affinity: 0.85, total_interactions: 12 },
+    'boss_email': { sender_id: 'boss_email', affinity: 0.95, total_interactions: 24 },
+    'marketing_deals': { sender_id: 'marketing_deals', affinity: 0.15, total_interactions: 3 }
+  },
+  bandit_arms: {
+    'urgent_DELIVER': { arm_key: 'urgent', arm: 'DELIVER', alpha: 18, beta: 2 },
+    'routine_DIGEST': { arm_key: 'routine', arm: 'DIGEST', alpha: 12, beta: 4 },
+    'promo_HOLD': { arm_key: 'promo', arm: 'HOLD', alpha: 15, beta: 3 }
+  }
+};
+
+// Initialize Lucide Icons
+lucide.createIcons();
+
+// Theme Toggle Handler
+const themeToggleBtn = $('#themeToggleBtn');
+themeToggleBtn.addEventListener('click', () => {
+  const isDark = document.documentElement.classList.toggle('dark');
+  $('#themeLabel').textContent = isDark ? 'Dark Mode' : 'Light Mode';
+});
+
+// Execution Mode Switching
+$('#modeMockBtn').addEventListener('click', () => {
+  mode = 'mock';
+  $('#modeMockBtn').className = 'px-2.5 py-1 rounded-md text-white bg-blue-600 font-semibold shadow-sm transition';
+  $('#modeLiveBtn').className = 'px-2.5 py-1 rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition';
+  $('#apiBase').classList.add('hidden');
+  $('#connDot').className = 'w-2 h-2 rounded-full bg-emerald-500';
+  $('#connLabel').textContent = 'Mock Engine Ready';
+  logLine('Switched execution mode to Client Simulation.');
+});
+
+$('#modeLiveBtn').addEventListener('click', () => {
+  mode = 'live';
+  $('#modeLiveBtn').className = 'px-2.5 py-1 rounded-md text-white bg-blue-600 font-semibold shadow-sm transition';
+  $('#modeMockBtn').className = 'px-2.5 py-1 rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition';
+  $('#apiBase').classList.remove('hidden');
+  checkHealth();
+  logLine('Switched execution mode to Live REST API Endpoint.');
+});
+
+// Sensor Switch Toggles
+function wireSwitch(id, key) {
+  const el = document.getElementById(id);
+  el.addEventListener('click', () => {
+    el.classList.toggle('active');
+    mockState.telemetry[key] = el.classList.contains('active');
+    updateContextDisplay();
+  });
+}
+wireSwitch('sw-charging', 'is_charging');
+wireSwitch('sw-wifi', 'is_unmetered_wifi');
+wireSwitch('sw-cal', 'calendar_busy');
+
+// Slider Listeners
+$('#speed').addEventListener('input', (e) => {
+  const v = parseFloat(e.target.value);
+  $('#speedVal').textContent = `${v.toFixed(1)} m/s`;
+  mockState.telemetry.speed_mps = v;
+  updateContextDisplay();
+});
+
+$('#imu').addEventListener('input', (e) => {
+  const v = parseFloat(e.target.value);
+  $('#imuVal').textContent = `${v.toFixed(1)} m/s²`;
+  mockState.telemetry.imu_magnitude = v;
+  updateContextDisplay();
+});
+
+// Update Evaluated Context Summary
+function updateContextDisplay() {
+  const t = mockState.telemetry;
+  let motion = 'Stationary';
+  if (t.speed_mps > 10) motion = 'Vehicle / Driving';
+  else if (t.speed_mps > 1.5 || t.imu_magnitude > 4) motion = 'Walking / Active';
+
+  let attention = 'Low Load (Receptive)';
+  if (t.calendar_busy && t.speed_mps > 5) attention = 'High (Driving + Meeting)';
+  else if (t.calendar_busy) attention = 'High (Calendar Event Active)';
+  else if (t.speed_mps > 10) attention = 'High (Driving)';
+
+  $('#ctxMotion').textContent = motion;
+  $('#ctxAttention').textContent = attention;
+  $('#ctxPower').textContent = `${t.is_charging ? 'Plugged In' : 'Battery'} / ${t.is_unmetered_wifi ? 'Wi-Fi' : 'Cellular'}`;
+}
+
+// Push Telemetry Cache Button
+$('#pushTelemetry').addEventListener('click', async () => {
+  if (mode === 'live') {
+    try {
+      await fetch($('#apiBase').value + '/telemetry', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(mockState.telemetry)
+      });
+      logLine('Pushed telemetry payload to remote sensor cache.');
+    } catch {
+      logLine('<span class="text-rose-500">Failed to push telemetry to live backend.</span>');
+    }
+  } else {
+    logLine(`Telemetry registers synced: speed=${mockState.telemetry.speed_mps}m/s, imu=${mockState.telemetry.imu_magnitude}m/s²`);
+  }
+});
+
+// Phone Screen Clock Update
+function updatePhoneClock() {
+  const now = new Date();
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  if ($('#phoneClock')) $('#phoneClock').textContent = `${hours}:${minutes}`;
+  if ($('#phoneBigTime')) $('#phoneBigTime').textContent = `${hours}:${minutes}`;
+  
+  const options = { weekday: 'long', month: 'long', day: 'numeric' };
+  if ($('#phoneDate')) $('#phoneDate').textContent = now.toLocaleDateString('en-US', options);
+}
+setInterval(updatePhoneClock, 1000);
+updatePhoneClock();
+
+// Helper for App Icon Badges
+function getAppIcon(senderId) {
+  if (senderId.includes('slack')) return '<i data-lucide="message-square" class="w-3 h-3 text-emerald-400"></i>';
+  if (senderId.includes('boss') || senderId.includes('email')) return '<i data-lucide="mail" class="w-3 h-3 text-blue-400"></i>';
+  if (senderId.includes('deals') || senderId.includes('marketing')) return '<i data-lucide="tag" class="w-3 h-3 text-amber-400"></i>';
+  return '<i data-lucide="bell" class="w-3 h-3 text-purple-400"></i>';
+}
+
+// ---- Phone notification surface (DELIVER = banner, DIGEST = batched card, HOLD = queued) ----
+let phoneItemSeq = 0;
+const phoneItems = {};      // id -> { sender_id, category, action }
+const digestItems = [];     // [{ id, sender_id, title }]
+
+function removeWithFade(el) {
+  if (!el) return;
+  el.style.transition = 'opacity .25s, transform .25s';
+  el.style.opacity = '0';
+  el.style.transform = 'translateX(30px)';
+  setTimeout(() => el.remove(), 250);
+}
+
+function renderDigestCard() {
+  const area = $('#phoneBannerArea');
+  let card = document.getElementById('phoneDigestCard');
+  if (!digestItems.length) { if (card) card.remove(); return; }
+  if (!card) {
+    card = document.createElement('div');
+    card.id = 'phoneDigestCard';
+    card.className = 'p-3 rounded-2xl backdrop-blur-xl border border-amber-500/40 bg-amber-950/75 text-white shadow-2xl space-y-2';
+    area.appendChild(card);
+  }
+  card.innerHTML = `
+    <div class="flex justify-between items-center text-[11px] font-bold uppercase tracking-wider text-amber-200">
+      <span>📦 Smart Digest</span><span class="font-mono">${digestItems.length} batched</span>
+    </div>
+    ${digestItems.map(it => `
+      <div class="flex items-center gap-2 text-[11px] border-t border-white/10 pt-1.5">
+        <div class="flex-1 min-w-0"><span class="text-amber-300 font-mono">${it.sender_id}</span>
+          <div class="truncate text-slate-200">${it.title}</div></div>
+        <button onclick="phoneAct(${it.id},'digest_opened')" class="px-2 py-0.5 bg-blue-600/90 rounded text-[10px] font-bold">Open</button>
+        <button onclick="phoneAct(${it.id},'digest_ignored')" class="px-2 py-0.5 bg-white/10 rounded text-[10px]">Ignore</button>
+      </div>`).join('')}`;
+}
+
+// Open/Dismiss/Ignore on any phone item: send feedback AND remove it from the screen
+function phoneAct(id, signal) {
+  const ctx = phoneItems[id];
+  if (!ctx) return;
+  delete phoneItems[id];
+  if (ctx.action === 'DIGEST') {
+    const i = digestItems.findIndex(d => d.id === id);
+    if (i >= 0) digestItems.splice(i, 1);
+    renderDigestCard();
+  } else {
+    removeWithFade(document.getElementById('pn-' + id));
+  }
+  submitFeedback(ctx, signal);
+}
+
+function triggerPhoneNotification(payload, action, category) {
+  const phoneFrame = $('#phoneFrame');
+  const bannerArea = $('#phoneBannerArea');
+  const n = payload.message.notification;
+  const sender_id = payload.message.sender_id;
+
+  if (action === 'DELIVER') {
+    const id = ++phoneItemSeq;
+    phoneItems[id] = { sender_id, category, action };
+
+    phoneFrame.classList.add('phone-vibrate');
+    setTimeout(() => phoneFrame.classList.remove('phone-vibrate'), 500);
+
+    const island = $('#dynamicIsland'), islandContent = $('#islandContent');
+    if (island && islandContent) {
+      islandContent.textContent = n.title;
+      islandContent.classList.remove('hidden');
+      island.classList.add('expand');
+      setTimeout(() => { island.classList.remove('expand'); islandContent.classList.add('hidden'); }, 2200);
+    }
+
+    if (soundEnabled) {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator(), gain = ctx.createGain();
+        osc.connect(gain); gain.connect(ctx.destination);
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(587.33, ctx.currentTime);
+        osc.frequency.setValueAtTime(880, ctx.currentTime + 0.08);
+        gain.gain.setValueAtTime(0.12, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+        osc.start(); osc.stop(ctx.currentTime + 0.3);
+      } catch (e) {}
+    }
+
+    const banner = document.createElement('div');
+    banner.id = 'pn-' + id;
+    banner.className = 'anim-slide-down p-3.5 rounded-2xl backdrop-blur-xl border text-white shadow-2xl space-y-2 bg-slate-900/80 border-white/20 shadow-black/50';
+    banner.innerHTML = `
+      <div class="flex justify-between items-center text-[11px]">
+        <span class="flex items-center gap-1.5 font-bold uppercase tracking-wider text-slate-200">
+          <span class="p-1 rounded-md bg-white/10 flex items-center justify-center">${getAppIcon(sender_id)}</span>
+          ${sender_id}
+        </span>
+        <span class="text-[10px] text-slate-400 font-mono">now</span>
+      </div>
+      <div>
+        <div class="text-xs font-bold leading-tight text-white">${n.title}</div>
+        <div class="text-[11.5px] text-slate-300 leading-snug mt-0.5">${n.body}</div>
+      </div>
+      <div class="flex gap-2 pt-1 border-t border-white/10">
+        <button onclick="phoneAct(${id},'opened')" class="flex-1 py-1 bg-blue-600/90 hover:bg-blue-500 rounded-lg text-[10px] font-bold text-white transition active:scale-95 shadow-sm">Open</button>
+        <button onclick="phoneAct(${id},'dismissed')" class="flex-1 py-1 bg-white/10 hover:bg-white/20 rounded-lg text-[10px] font-medium text-slate-300 transition active:scale-95">Dismiss</button>
+      </div>`;
+    bannerArea.prepend(banner);
+    lucide.createIcons();
+    return id;
+
+  } else if (action === 'DIGEST') {
+    // Silent: no banner, no sound, no vibration -- just batched into the digest card
+    const id = ++phoneItemSeq;
+    phoneItems[id] = { sender_id, category, action };
+    digestItems.push({ id, sender_id, title: n.title });
+    renderDigestCard();
+    return id;
+
+  } else if (action === 'HOLD') {
+    heldNotificationsCount += 1;
+    const badge = $('#phoneQueueBadge');
+    badge.classList.remove('hidden');
+    $('#phoneQueueText').textContent = `${heldNotificationsCount} notification${heldNotificationsCount > 1 ? 's' : ''} queued (HOLD)`;
+    return null;
+  }
+  return null;
+}
+
+// Also reset the digest when the phone screen is cleared
+$('#btnClearPhone').addEventListener('click', () => {
+  digestItems.length = 0;
+  Object.keys(phoneItems).forEach(k => delete phoneItems[k]);
+});
+
+// Clear Phone Banner
+$('#btnClearPhone').addEventListener('click', () => {
+  $('#phoneBannerArea').innerHTML = '';
+  $('#phoneQueueBadge').classList.add('hidden');
+  heldNotificationsCount = 0;
+});
+
+// Sound Toggle
+$('#btnPhoneSound').addEventListener('click', () => {
+  soundEnabled = !soundEnabled;
+  $('#btnPhoneSound').innerHTML = soundEnabled 
+    ? '<i data-lucide="volume-2" class="w-3.5 h-3.5"></i> Sound' 
+    : '<i data-lucide="volume-x" class="w-3.5 h-3.5 text-rose-500"></i> Muted';
+  lucide.createIcons();
+});
+
+// Feedback Recording
+async function submitFeedback(ctx, signal) {
+  logLine(`Feedback: <b>${signal}</b> for ${ctx.sender_id} (${ctx.category}/${ctx.action})`);
+  if (mode === 'mock') {
+    const sender = mockState.senders[ctx.sender_id];
+    if (sender) {
+      const good = signal === 'opened' || signal === 'digest_opened';
+      sender.affinity = good ? Math.min(1.0, sender.affinity + 0.08) : Math.max(0.05, sender.affinity - 0.05);
+    }
+    renderStateVisualizers();
+    return;
+  }
+  try {
+    await fetch($('#apiBase').value + '/feedback', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sender_id: ctx.sender_id, category: ctx.category, action_taken: ctx.action, signal })
+    });
+    refreshState();
+  } catch { logLine('Feedback dispatch failed.'); }
+}
+
+// Buttons on the result card
+function recordFeedback(signal) {
+  if (!lastResult) return;
+  const action = lastResult.routing.action;
+  const mapped = action === 'DIGEST' ? (signal === 'opened' ? 'digest_opened' : 'digest_ignored') : signal;
+  if (lastResult.phoneId && phoneItems[lastResult.phoneId]) phoneAct(lastResult.phoneId, mapped); // also clears the phone item
+  else submitFeedback({ sender_id: lastResult.sender_id, category: lastResult.category, action }, mapped);
+}
+
+$('#fbOpened').addEventListener('click', () => recordFeedback('opened'));
+$('#fbDismissed').addEventListener('click', () => recordFeedback('dismissed'));
+
+// Render State Visualizers
+function renderStateVisualizers() {
+  const senderList = $('#senderList');
+  senderList.innerHTML = '';
+  const senders = Object.values(mockState.senders);
+
+  if (!senders.length) {
+    senderList.innerHTML = '<div class="text-xs text-slate-400 italic">No sender nodes evaluated yet.</div>';
+  } else {
+    senders.forEach(s => {
+      const row = document.createElement('div');
+      row.className = 'p-2.5 bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-lg space-y-1 text-xs';
+      const pct = Math.round(s.affinity * 100);
+      row.innerHTML = `
+        <div class="flex justify-between font-mono">
+          <span class="text-slate-800 dark:text-slate-200 font-medium">${s.sender_id}</span>
+          <span class="text-blue-600 dark:text-blue-400 font-semibold">${pct}%</span>
+        </div>
+        <div class="w-full bg-slate-200 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
+          <div class="bg-blue-600 dark:bg-blue-500 h-full rounded-full" style="width: ${pct}%"></div>
+        </div>
+      `;
+      senderList.appendChild(row);
+    });
+  }
+
+  const armList = $('#armList');
+  armList.innerHTML = '';
+  const arms = Object.values(mockState.bandit_arms);
+
+  if (!arms.length) {
+    armList.innerHTML = '<div class="text-xs text-slate-400 italic">No bandit history yet.</div>';
+  } else {
+    arms.forEach(a => {
+      const mean = (a.alpha / (a.alpha + a.beta)).toFixed(2);
+      const row = document.createElement('div');
+      row.className = 'p-2.5 bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-lg flex justify-between items-center';
+      row.innerHTML = `
+        <div>
+          <span class="text-slate-800 dark:text-slate-200 font-semibold">${a.arm_key}</span>
+          <span class="text-slate-400 text-[10px] block font-mono">α:${a.alpha} β:${a.beta}</span>
+        </div>
+        <span class="text-emerald-600 dark:text-emerald-400 font-mono font-bold">${a.arm} (${mean})</span>
+      `;
+      armList.appendChild(row);
+    });
+  }
+}
+
+// Initial Visualizer Render
+renderStateVisualizers();
+
+// Clear Log
+$('#clearLogBtn').addEventListener('click', () => {
+  $('#log').innerHTML = '<div class="text-slate-400 italic">Log cleared.</div>';
+});
+
+// Check Health for Live Backend
+async function checkHealth() {
+  if (mode !== 'live') return;
+  try {
+    const res = await fetch($('#apiBase').value + '/health');
+    if (res.ok) {
+      $('#connDot').className = 'w-2 h-2 rounded-full bg-emerald-500';
+      $('#connLabel').textContent = 'Live API Connected';
+    } else throw new Error();
+  } catch {
+    $('#connDot').className = 'w-2 h-2 rounded-full bg-rose-500';
+    $('#connLabel').textContent = 'Backend Unreachable';
+  }
+}
+
+// =====================================================================
+// ADDED: missing pieces (logLine, Send handler, result rendering, live state)
+// =====================================================================
+function logLine(html) {
+  const log = $('#log');
+  if (log.querySelector('.italic')) log.innerHTML = '';
+  const row = document.createElement('div');
+  row.innerHTML = `<span class="text-slate-400">${new Date().toLocaleTimeString()}</span> ${html}`;
+  log.prepend(row);
+}
+
+const STAGES = ['ingress', 'nlp', 'telemetry', 'graph', 'bandit', 'egress'];
+function setStage(name, state) {
+  const el = document.querySelector(`.stage-badge[data-stage="${name}"]`);
+  if (!el) return;
+  el.classList.remove('border-emerald-500', 'bg-emerald-50', 'dark:bg-emerald-950/40', 'border-blue-500', 'opacity-40');
+  if (state === 'done') el.classList.add('border-emerald-500', 'bg-emerald-50', 'dark:bg-emerald-950/40');
+  else if (state === 'active') el.classList.add('border-blue-500');
+  else if (state === 'skipped') el.classList.add('opacity-40');
+}
+function resetStages() { STAGES.forEach(s => setStage(s, 'idle')); }
+
+const BADGE = {
+  DELIVER: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300',
+  DIGEST: 'bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300',
+  HOLD: 'bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300',
+};
+
+function meterRow(label, value) {
+  const pct = Math.round(value * 100);
+  return `<div><div class="flex justify-between font-mono"><span>${label}</span><span>${value.toFixed(3)}</span></div>
+    <div class="w-full bg-slate-200 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
+    <div class="bg-blue-600 h-full rounded-full" style="width:${pct}%"></div></div></div>`;
+}
+
+function renderResult(data, sender_id) {
+  const r = data.routing;
+  lastResult = { sender_id, category: data.classification, routing: r };
+
+  $('#resultCard').classList.remove('hidden');
+  $('#actionBadge').textContent = r.action;
+  $('#actionBadge').className = 'font-mono text-xs font-bold px-2.5 py-1 rounded ' + (BADGE[r.action] || '');
+  $('#latencyMeta').textContent = `${data.latency_ms}ms · ${data.budget_ok ? 'budget OK' : 'over budget'}`;
+  $('#classMeta').textContent = `class=${data.classification}`;
+  $('#reasonText').textContent =
+    `${r.reason} · via ${data.decision_source || 'bypass'} · confidence ${data.confidence_score}`;
+
+  let html = '';
+  if (r.breakdown) {
+    const b = r.breakdown;
+    html += meterRow('Telemetry', b.telemetry_score);
+    html += meterRow('Graph affinity', b.graph_affinity);
+    html += meterRow('Bandit pref (deliver vs digest)', b.bandit_expected_value);
+    html += meterRow('Final score', b.final_score);
+    html += `<div class="font-mono text-[10px] text-slate-400">decided by: ${b.decided_by} · EV deliver ${b.bandit_deliver_ev} / digest ${b.bandit_digest_ev} · Thompson pick: ${b.bandit_thompson_sample}</div>`;
+  } else {
+    html += `<div class="text-slate-400 italic">Decided before fusion (${r.reason}).</div>`;
+  }
+  if (data.class_scores && Object.keys(data.class_scores).length) {
+    html += `<div class="font-mono text-[10px] text-slate-400 pt-1">class scores: ${
+      Object.entries(data.class_scores).map(([k, v]) => `${k}=${v}`).join(' · ')}</div>`;
+  }
+  $('#meters').innerHTML = html;
+}
+
+async function refreshState() {
+  if (mode !== 'live') return;
+  try {
+    const res = await fetch($('#apiBase').value + '/state');
+    if (!res.ok) return;
+    const s = await res.json();
+    mockState.senders = {};
+    s.senders.forEach(x => { mockState.senders[x.sender_id] = x; });
+    mockState.bandit_arms = {};
+    s.bandit_arms.forEach(a => { mockState.bandit_arms[a.arm_key + '_' + a.arm] = a; });
+    renderStateVisualizers();
+  } catch (e) {}
+}
+setInterval(refreshState, 3000);
+
+$('#sendBtn').addEventListener('click', async () => {
+  if (mode !== 'live') $('#modeLiveBtn').click();   // classifier lives in the Python backend
+  const base = $('#apiBase').value;
+  const sender_id = $('#senderId').value.trim() || 'unknown_sender';
+  const payload = {
+    message: {
+      notification: { title: $('#title').value, body: $('#body').value },
+      sender_id,
+      android_channel_id: $('#channel').value || null,
+    },
+  };
+
+  resetStages();
+  setStage('ingress', 'done');
+  setStage('nlp', 'active');
+  $('#pipelineStatus').textContent = 'Running…';
+  $('#sendBtn').disabled = true;
+
+  try {
+    // make sure the backend uses the current slider/toggle values
+    await fetch(base + '/telemetry', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(mockState.telemetry),
+    });
+
+    const res = await fetch(base + '/intercept-notification', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}: ${await res.text()}`);
+    const data = await res.json();
+
+    setStage('nlp', data.bypassed_ml ? 'skipped' : 'done');
+    const fused = !!(data.routing && data.routing.breakdown);
+    ['telemetry', 'graph', 'bandit'].forEach(s => setStage(s, fused ? 'done' : 'skipped'));
+    setStage('egress', 'done');
+    $('#pipelineStatus').textContent = `Done · ${data.latency_ms}ms`;
+
+    renderResult(data, sender_id);
+    lastResult.phoneId = triggerPhoneNotification(payload, data.routing.action, data.classification);
+    logLine(`<b>${data.classification}</b> → <b>${data.routing.action}</b> (${data.routing.reason}, ${data.latency_ms}ms) — "${payload.message.notification.title}"`);
+    refreshState();
+  } catch (e) {
+    setStage('nlp', 'idle');
+    $('#pipelineStatus').textContent = 'Error';
+    logLine(`<span class="text-rose-500">Request failed: ${e.message}. Is the server running at ${base}?</span>`);
+  } finally {
+    $('#sendBtn').disabled = false;
+  }
+});
+
+// Use the real Python backend by default
+$('#modeLiveBtn').click();
+</script>
+</body>
+</html>

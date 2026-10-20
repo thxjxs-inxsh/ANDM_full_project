@@ -1,0 +1,560 @@
+[
+  {
+    "title": "Ramesh is arriving in 2 min",
+    "body": "Your cab KA01AB1234 will reach in 2 minutes. Share OTP 4821 to start the ride.",
+    "sender_id": "ola_rides",
+    "label": "Immediate"
+  },
+  {
+    "title": "Your driver has arrived",
+    "body": "Suresh is waiting at the pickup point in a white Swift Dzire.",
+    "sender_id": "uber_rides",
+    "label": "Immediate"
+  },
+  {
+    "title": "Captain is at your location",
+    "body": "Please come out, he is waiting near the main gate.",
+    "sender_id": "rapido",
+    "label": "Immediate"
+  },
+  {
+    "title": "OTP for your transaction",
+    "body": "489302 is your OTP for payment of Rs. 2,499 at Amazon. Do not share with anyone.",
+    "sender_id": "hdfc_bank",
+    "label": "Immediate"
+  },
+  {
+    "title": "Alert: Unauthorised transaction",
+    "body": "Rs. 18,000 debited from A/c XX4521 via UPI. Not you? Call 1930 immediately.",
+    "sender_id": "sbi_alerts",
+    "label": "Immediate"
+  },
+  {
+    "title": "Payment failed",
+    "body": "Your payment of Rs. 850 to Sri Lakshmi Stores could not be completed.",
+    "sender_id": "phonepe",
+    "label": "Immediate"
+  },
+  {
+    "title": "New sign-in on Windows",
+    "body": "Your account priya.nair@gmail.com was just signed in from Mumbai. Was this you?",
+    "sender_id": "google_security",
+    "label": "Immediate"
+  },
+  {
+    "title": "Your credit card is blocked",
+    "body": "Card ending 7788 has been blocked due to suspicious activity. Call us now.",
+    "sender_id": "icici_bank",
+    "label": "Immediate"
+  },
+  {
+    "title": "Your login code",
+    "body": "Use 773920 to log in to Airtel Thanks. Valid for 10 minutes.",
+    "sender_id": "airtel",
+    "label": "Immediate"
+  },
+  {
+    "title": "Incoming call",
+    "body": "Amma is calling you.",
+    "sender_id": "phone_call_amma",
+    "label": "Immediate"
+  },
+  {
+    "title": "4 missed calls",
+    "body": "You have 4 missed calls from Appa.",
+    "sender_id": "phone_call_appa",
+    "label": "Immediate"
+  },
+  {
+    "title": "Money sent",
+    "body": "Rs. 15,000 sent to Vikram Singh. If you did not do this, block your account now.",
+    "sender_id": "paytm",
+    "label": "Immediate"
+  },
+  {
+    "title": "Red alert: Extremely heavy rain",
+    "body": "Very heavy rainfall expected in the next 3 hours. Avoid travel and stay indoors.",
+    "sender_id": "imd_alerts",
+    "label": "Immediate"
+  },
+  {
+    "title": "Earthquake alert",
+    "body": "Tremors felt in your area. Move to an open space immediately.",
+    "sender_id": "ndma_alerts",
+    "label": "Immediate"
+  },
+  {
+    "title": "Your delivery partner is at your door",
+    "body": "Arjun has reached your location with your order. Please collect it.",
+    "sender_id": "swiggy",
+    "label": "Immediate"
+  },
+  {
+    "title": "Rider has arrived",
+    "body": "Your order is at your doorstep. Please collect it now.",
+    "sender_id": "zepto",
+    "label": "Immediate"
+  },
+  {
+    "title": "Motion detected at front door",
+    "body": "Camera Main Gate detected a person outside.",
+    "sender_id": "home_security",
+    "label": "Immediate"
+  },
+  {
+    "title": "Smoke detected in kitchen",
+    "body": "Fire alarm triggered. Check immediately.",
+    "sender_id": "home_alarm",
+    "label": "Immediate"
+  },
+  {
+    "title": "Insulin reminder",
+    "body": "Time to take your insulin dose now.",
+    "sender_id": "health_app",
+    "label": "Immediate"
+  },
+  {
+    "title": "Margin shortfall",
+    "body": "Your account has a margin shortfall of Rs. 12,400. Positions may be squared off at 3:15 PM.",
+    "sender_id": "zerodha",
+    "label": "Immediate"
+  },
+  {
+    "title": "Your security code",
+    "body": "123456 is your Instagram code. Do not share it.",
+    "sender_id": "instagram_security",
+    "label": "Immediate"
+  },
+  {
+    "title": "Your registration code",
+    "body": "Your WhatsApp code is 482-193. Do not share this code.",
+    "sender_id": "whatsapp_security",
+    "label": "Immediate"
+  },
+  {
+    "title": "OTP for IRCTC login",
+    "body": "Your OTP is 556102. It is valid for 5 minutes.",
+    "sender_id": "irctc",
+    "label": "Immediate"
+  },
+  {
+    "title": "Transaction declined",
+    "body": "Your transaction of Rs. 3,200 was declined due to insufficient balance.",
+    "sender_id": "hdfc_bank",
+    "label": "Immediate"
+  },
+  {
+    "title": "NetBanking accessed from new device",
+    "body": "Your account was accessed from a new device in Pune. Block access if this was not you.",
+    "sender_id": "kotak_bank",
+    "label": "Immediate"
+  },
+  {
+    "title": "UPI PIN was reset",
+    "body": "Your UPI PIN was reset successfully. If this was not you, contact support now.",
+    "sender_id": "cred",
+    "label": "Immediate"
+  },
+  {
+    "title": "Ride cancelled by driver",
+    "body": "Your driver cancelled the trip. Please rebook your ride.",
+    "sender_id": "ola_rides",
+    "label": "Immediate"
+  },
+  {
+    "title": "LPG leak detected",
+    "body": "Gas sensor alert in kitchen. Turn off the regulator and open the windows.",
+    "sender_id": "home_sensor",
+    "label": "Immediate"
+  },
+  {
+    "title": "Urgent: Your child is unwell",
+    "body": "Aarav has been taken ill. Please come to school immediately.",
+    "sender_id": "school_app",
+    "label": "Immediate"
+  },
+  {
+    "title": "Critical lab value flagged",
+    "body": "Your doctor needs to speak with you today about your report. Please call back.",
+    "sender_id": "apollo_labs",
+    "label": "Immediate"
+  },
+  {
+    "title": "Visitor at the gate",
+    "body": "Ravi (Plumber) is waiting at the gate. Approve or deny entry.",
+    "sender_id": "mygate",
+    "label": "Immediate"
+  },
+  {
+    "title": "Priya",
+    "body": "Are we still on for dinner tonight? Let me know by 6.",
+    "sender_id": "priya_whatsapp",
+    "label": "Adaptive"
+  },
+  {
+    "title": "Rahul on Slack",
+    "body": "Bro, check the PR when you are free. Small changes needed.",
+    "sender_id": "rahul_slack",
+    "label": "Adaptive"
+  },
+  {
+    "title": "Ananya",
+    "body": "Sent you the notes for tomorrow's class.",
+    "sender_id": "ananya_whatsapp",
+    "label": "Adaptive"
+  },
+  {
+    "title": "Goa Trip 2026",
+    "body": "Karthik added you to the group Goa Trip 2026.",
+    "sender_id": "karthik_whatsapp",
+    "label": "Adaptive"
+  },
+  {
+    "title": "Daily standup in 15 minutes",
+    "body": "Standup at 10:00 AM on Google Meet.",
+    "sender_id": "google_calendar",
+    "label": "Adaptive"
+  },
+  {
+    "title": "Meeting invite from Meera Iyer",
+    "body": "Q3 planning review on Friday at 4 PM.",
+    "sender_id": "outlook",
+    "label": "Adaptive"
+  },
+  {
+    "title": "Platform changed",
+    "body": "Train 12627 Karnataka Express will now arrive on platform 5.",
+    "sender_id": "irctc",
+    "label": "Adaptive"
+  },
+  {
+    "title": "Gate change for 6E 5312",
+    "body": "Your flight will now board at Gate 24.",
+    "sender_id": "indigo",
+    "label": "Adaptive"
+  },
+  {
+    "title": "Your package is out for delivery",
+    "body": "Your order will arrive today by 8 PM.",
+    "sender_id": "amazon",
+    "label": "Adaptive"
+  },
+  {
+    "title": "Your order has been shipped",
+    "body": "Expected delivery by Thursday.",
+    "sender_id": "flipkart",
+    "label": "Adaptive"
+  },
+  {
+    "title": "Your order is on the way",
+    "body": "Arriving in about 12 minutes.",
+    "sender_id": "blinkit",
+    "label": "Adaptive"
+  },
+  {
+    "title": "Your food is being prepared",
+    "body": "Meghana Foods has accepted your order.",
+    "sender_id": "swiggy",
+    "label": "Adaptive"
+  },
+  {
+    "title": "Electricity bill due",
+    "body": "Your bill of Rs. 1,248 is due on 15 Oct.",
+    "sender_id": "bescom",
+    "label": "Adaptive"
+  },
+  {
+    "title": "Your plan expires in 2 days",
+    "body": "Recharge to keep your data and calling benefits.",
+    "sender_id": "jio",
+    "label": "Adaptive"
+  },
+  {
+    "title": "Credit card payment due",
+    "body": "Your bill of Rs. 14,320 is due on 20 Oct.",
+    "sender_id": "hdfc_bank",
+    "label": "Adaptive"
+  },
+  {
+    "title": "Appointment tomorrow",
+    "body": "Your appointment with Dr. Reddy is tomorrow at 11 AM.",
+    "sender_id": "practo",
+    "label": "Adaptive"
+  },
+  {
+    "title": "Amma",
+    "body": "Beta, did you eat lunch?",
+    "sender_id": "amma_whatsapp",
+    "label": "Adaptive"
+  },
+  {
+    "title": "Vikram on Slack",
+    "body": "Can you join the call at 3? I need your input on the deck.",
+    "sender_id": "vikram_slack",
+    "label": "Adaptive"
+  },
+  {
+    "title": "Neha Gupta replied to your message",
+    "body": "Thanks for connecting, would love to chat next week.",
+    "sender_id": "linkedin",
+    "label": "Adaptive"
+  },
+  {
+    "title": "Sneha shared a file with you",
+    "body": "Budget 2026.xlsx is now available to you.",
+    "sender_id": "google_drive",
+    "label": "Adaptive"
+  },
+  {
+    "title": "Review requested",
+    "body": "Rohan requested your review on pull request 482.",
+    "sender_id": "github",
+    "label": "Adaptive"
+  },
+  {
+    "title": "Scheduled ride confirmed",
+    "body": "Your ride tomorrow at 6:30 AM is booked.",
+    "sender_id": "ola_rides",
+    "label": "Adaptive"
+  },
+  {
+    "title": "System update available",
+    "body": "Security update is ready to install.",
+    "sender_id": "android_system",
+    "label": "Adaptive"
+  },
+  {
+    "title": "Battery low",
+    "body": "12 percent remaining. Connect your charger.",
+    "sender_id": "android_system",
+    "label": "Adaptive"
+  },
+  {
+    "title": "Light rain this evening",
+    "body": "Light rain expected in Bengaluru. Carry an umbrella.",
+    "sender_id": "weather",
+    "label": "Adaptive"
+  },
+  {
+    "title": "Divya requested money",
+    "body": "Divya requested Rs. 500 from you.",
+    "sender_id": "google_pay",
+    "label": "Adaptive"
+  },
+  {
+    "title": "Arjun",
+    "body": "Match starts at 7:30, come fast.",
+    "sender_id": "arjun_telegram",
+    "label": "Adaptive"
+  },
+  {
+    "title": "Parcel update",
+    "body": "Your parcel has reached the nearest hub.",
+    "sender_id": "delhivery",
+    "label": "Adaptive"
+  },
+  {
+    "title": "Parent teacher meeting",
+    "body": "Meeting scheduled on Saturday at 10 AM.",
+    "sender_id": "school_app",
+    "label": "Adaptive"
+  },
+  {
+    "title": "You were mentioned",
+    "body": "Meera mentioned you in the Sprint Planning thread.",
+    "sender_id": "teams",
+    "label": "Adaptive"
+  },
+  {
+    "title": "India need 24 runs in 18 balls",
+    "body": "India vs Australia, 3rd ODI, live now.",
+    "sender_id": "cricbuzz",
+    "label": "Adaptive"
+  },
+  {
+    "title": "Zomato Gold offer",
+    "body": "Get free delivery on all orders this month.",
+    "sender_id": "zomato_promo",
+    "label": "Ignore"
+  },
+  {
+    "title": "Flat 50% off",
+    "body": "Use code FEAST50 on your next order.",
+    "sender_id": "swiggy_promo",
+    "label": "Ignore"
+  },
+  {
+    "title": "End of Reason Sale is live",
+    "body": "Up to 70% off on top fashion brands.",
+    "sender_id": "myntra_promo",
+    "label": "Ignore"
+  },
+  {
+    "title": "Great Indian Festival starts tonight",
+    "body": "Grab the best deals before they are gone.",
+    "sender_id": "amazon_promo",
+    "label": "Ignore"
+  },
+  {
+    "title": "You earned cashback",
+    "body": "Rs. 5 cashback has been added to your wallet.",
+    "sender_id": "phonepe",
+    "label": "Ignore"
+  },
+  {
+    "title": "Rate your experience",
+    "body": "How was your recent recharge?",
+    "sender_id": "paytm",
+    "label": "Ignore"
+  },
+  {
+    "title": "Rate your trip with Suresh",
+    "body": "Tell us how it went.",
+    "sender_id": "uber_rides",
+    "label": "Ignore"
+  },
+  {
+    "title": "Your ride receipt",
+    "body": "Rs. 243 for your trip on Tuesday.",
+    "sender_id": "ola_rides",
+    "label": "Ignore"
+  },
+  {
+    "title": "Your statement is ready",
+    "body": "Account statement for September is available to download.",
+    "sender_id": "hdfc_bank",
+    "label": "Ignore"
+  },
+  {
+    "title": "Salary credited",
+    "body": "Rs. 52,000 credited to A/c XX4521. Available balance Rs. 61,320.",
+    "sender_id": "sbi_alerts",
+    "label": "Ignore"
+  },
+  {
+    "title": "Anita and 5 others liked your photo",
+    "body": "",
+    "sender_id": "instagram",
+    "label": "Ignore"
+  },
+  {
+    "title": "5 people viewed your profile",
+    "body": "See who is looking at you.",
+    "sender_id": "linkedin_promo",
+    "label": "Ignore"
+  },
+  {
+    "title": "Do not break your 21-day streak",
+    "body": "Practice Hindi for just 5 minutes today.",
+    "sender_id": "duolingo",
+    "label": "Ignore"
+  },
+  {
+    "title": "New video from Technical Guruji",
+    "body": "Watch now.",
+    "sender_id": "youtube",
+    "label": "Ignore"
+  },
+  {
+    "title": "New episode available",
+    "body": "Panchayat Season 4, Episode 3 is now streaming.",
+    "sender_id": "hotstar",
+    "label": "Ignore"
+  },
+  {
+    "title": "Movies near you this weekend",
+    "body": "Book tickets for the latest releases.",
+    "sender_id": "bookmyshow",
+    "label": "Ignore"
+  },
+  {
+    "title": "Your wishlist item is back",
+    "body": "Now at 30% off. Grab it before it sells out.",
+    "sender_id": "nykaa_promo",
+    "label": "Ignore"
+  },
+  {
+    "title": "Your Daily Mix is ready",
+    "body": "Fresh songs picked for you.",
+    "sender_id": "spotify",
+    "label": "Ignore"
+  },
+  {
+    "title": "Rediscover this day",
+    "body": "See photos from 3 years ago.",
+    "sender_id": "google_photos",
+    "label": "Ignore"
+  },
+  {
+    "title": "Weekly market digest",
+    "body": "Top reads from the Zerodha blog.",
+    "sender_id": "zerodha_blog",
+    "label": "Ignore"
+  },
+  {
+    "title": "You have new rewards",
+    "body": "Check out scratch cards waiting for you.",
+    "sender_id": "cred_promo",
+    "label": "Ignore"
+  },
+  {
+    "title": "Items are waiting in your cart",
+    "body": "Complete your order before they run out.",
+    "sender_id": "instamart_promo",
+    "label": "Ignore"
+  },
+  {
+    "title": "Your cart misses you",
+    "body": "Complete your purchase and get 10% off.",
+    "sender_id": "ajio_promo",
+    "label": "Ignore"
+  },
+  {
+    "title": "Stories picked for you",
+    "body": "Top reads on productivity this week.",
+    "sender_id": "medium",
+    "label": "Ignore"
+  },
+  {
+    "title": "Your weekly spam blocking stats",
+    "body": "47 spam calls were blocked this week.",
+    "sender_id": "truecaller",
+    "label": "Ignore"
+  },
+  {
+    "title": "Your weekly activity summary is ready",
+    "body": "You walked 48,200 steps this week.",
+    "sender_id": "google_fit",
+    "label": "Ignore"
+  },
+  {
+    "title": "Add-on data pack offer",
+    "body": "Get 2 GB extra at Rs. 19 today only.",
+    "sender_id": "jio_promo",
+    "label": "Ignore"
+  },
+  {
+    "title": "Upgrade to 5G",
+    "body": "Switch to Airtel 5G Plus at no extra cost.",
+    "sender_id": "airtel_promo",
+    "label": "Ignore"
+  },
+  {
+    "title": "Your invoice is ready",
+    "body": "Invoice for order 407-1234567 is available.",
+    "sender_id": "amazon_pay",
+    "label": "Ignore"
+  },
+  {
+    "title": "Review your recent purchase",
+    "body": "Tell others what you think.",
+    "sender_id": "flipkart_promo",
+    "label": "Ignore"
+  },
+  {
+    "title": "You won a scratch card",
+    "body": "Scratch now to see your reward.",
+    "sender_id": "google_pay_promo",
+    "label": "Ignore"
+  }
+]
